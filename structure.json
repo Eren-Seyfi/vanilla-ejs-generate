@@ -1,7 +1,7 @@
 {
   "inputDir": "src",
   "outputDir": "www",
-  "interval": 10000, 
+  "interval": 5000, 
   "mainTemplate": "templates/layouts/main.ejs", 
   "pagesDir": "templates/pages", 
   "templates": {

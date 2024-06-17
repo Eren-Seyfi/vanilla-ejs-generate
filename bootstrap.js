@@ -2,6 +2,7 @@ const ejs = require("ejs");
 const fs = require("fs");
 const path = require("path");
 const chokidar = require("chokidar");
+const fse = require("fs-extra");
 
 const structure = JSON.parse(
   fs.readFileSync(path.resolve(__dirname, "structure.json"), "utf8")
@@ -10,7 +11,10 @@ const structure = JSON.parse(
 const inputDir = path.resolve(__dirname, structure.inputDir || "");
 const outputDir = path.resolve(__dirname, structure.outputDir || "www");
 const interval = structure.interval || 10000; // Milisaniye cinsinden izleme süresi
-const mainTemplatePath = path.join(inputDir, structure.mainTemplate || "templates/layouts/main.ejs"); // Main template path
+const mainTemplatePath = path.join(
+  inputDir,
+  structure.mainTemplate || "templates/layouts/main.ejs"
+); // Main template path
 const pagesDir = path.join(inputDir, structure.pagesDir || "templates/pages"); // Pages directory
 
 function createStructure(basePath, structure) {
@@ -132,40 +136,46 @@ function handleFileChange(filePath, action) {
   const relativePath = path.relative(inputDir, filePath);
   const destPath = path.join(outputDir, relativePath);
 
-  if (relativePath.startsWith(structure.pagesDir) || relativePath.startsWith("public")) {
-    console.log(`File change detected: ${action} ${filePath}`);
-    renderAllTemplates();
-    copyPublicAssets();
-  } else if (relativePath.startsWith("templates")) {
-    return; // templates klasöründeki diğer değişiklikleri yoksay
-  } else {
+  if (relativePath.startsWith(structure.pagesDir)) {
+    const outputPath = destPath.replace(".ejs", ".html");
+
     switch (action) {
-      case 'add':
-      case 'change':
-        fs.copyFileSync(filePath, destPath);
-        console.log(`File copied: ${destPath}`);
+      case "add":
+      case "change":
+        const bodyContent = fs.readFileSync(filePath, "utf-8");
+        const data = {
+          title: path.basename(filePath, ".ejs"),
+          body: bodyContent,
+        };
+        renderTemplate(mainTemplatePath, outputPath, data);
         break;
-      case 'unlink':
-        if (fs.existsSync(destPath.replace(".ejs", ".html"))) {
-          fs.unlinkSync(destPath.replace(".ejs", ".html"));
-          console.log(`File deleted: ${destPath.replace(".ejs", ".html")}`);
-        }
-        break;
-      case 'addDir':
-        if (!fs.existsSync(destPath)) {
-          fs.mkdirSync(destPath);
-          console.log(`Directory created: ${destPath}`);
-        }
-        break;
-      case 'unlinkDir':
-        if (fs.existsSync(destPath)) {
-          fs.rmdirSync(destPath, { recursive: true });
-          console.log(`Directory deleted: ${destPath}`);
+      case "unlink":
+        if (fs.existsSync(outputPath)) {
+          fs.unlinkSync(outputPath);
+          console.log(`File deleted: ${outputPath}`);
         }
         break;
       default:
         break;
     }
+  } else if (relativePath.startsWith("public")) {
+    switch (action) {
+      case "add":
+      case "change":
+        fs.copyFileSync(filePath, destPath);
+        console.log(`File copied: ${destPath}`);
+        break;
+      case "unlink":
+        if (fs.existsSync(destPath)) {
+          fs.unlinkSync(destPath);
+          console.log(`File deleted: ${destPath}`);
+        }
+        break;
+      default:
+        break;
+    }
+  } else if (relativePath.startsWith("templates")) {
+    return; // templates klasöründeki diğer değişiklikleri yoksay
   }
 }
 
@@ -174,11 +184,16 @@ function startWatcher() {
     persistent: true,
   });
 
-  watcher.on('add', (filePath) => handleFileChange(filePath, 'add'));
-  watcher.on('change', (filePath) => handleFileChange(filePath, 'change'));
-  watcher.on('unlink', (filePath) => handleFileChange(filePath, 'unlink'));
-  watcher.on('addDir', (dirPath) => handleFileChange(dirPath, 'addDir'));
-  watcher.on('unlinkDir', (dirPath) => handleFileChange(dirPath, 'unlinkDir'));
+  watcher.on("add", (filePath) => handleFileChange(filePath, "add"));
+  watcher.on("change", (filePath) => handleFileChange(filePath, "change"));
+  watcher.on("unlink", (filePath) => handleFileChange(filePath, "unlink"));
+  watcher.on("addDir", (dirPath) => handleFileChange(dirPath, "addDir"));
+  watcher.on("unlinkDir", (dirPath) => handleFileChange(dirPath, "unlinkDir"));
+}
+
+function clearOutputDir() {
+  fse.emptyDirSync(outputDir);
+  console.log(`Output directory ${outputDir} cleared.`);
 }
 
 if (!fs.existsSync(outputDir)) {
@@ -195,6 +210,7 @@ startWatcher();
 
 // structure.json dosyasındaki interval değerine göre izleme süresi
 setInterval(() => {
+  clearOutputDir();
   renderAllTemplates();
   copyPublicAssets();
 }, interval);

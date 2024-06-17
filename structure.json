@@ -1,0 +1,13 @@
+{
+  "inputDir": "src",
+  "templates": {
+    "layouts": ["main.ejs"],
+    "partials": ["header.ejs", "footer.ejs", "nav.ejs"],
+    "pages": ["index.ejs", "about.ejs"]
+  },
+  "public": {
+    "css": ["style.css"],
+    "js": ["app.js"]
+  },
+  "outputDir": "www"
+}

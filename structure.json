@@ -1,5 +1,9 @@
 {
   "inputDir": "src",
+  "outputDir": "www",
+  "interval": 10000, 
+  "mainTemplate": "templates/layouts/main.ejs", 
+  "pagesDir": "templates/pages", 
   "templates": {
     "layouts": ["main.ejs"],
     "partials": ["header.ejs", "footer.ejs", "nav.ejs"],
@@ -8,6 +12,5 @@
   "public": {
     "css": ["style.css"],
     "js": ["app.js"]
-  },
-  "outputDir": "www"
+  }
 }

@@ -1,28 +1,30 @@
 const ejs = require("ejs");
 const fs = require("fs");
 const path = require("path");
+const chokidar = require("chokidar");
 
-// structure.json dosyasını oku
 const structure = JSON.parse(
   fs.readFileSync(path.resolve(__dirname, "structure.json"), "utf8")
 );
 
-// Dizinleri ve dosyaları oluşturmak için fonksiyon
+const inputDir = path.resolve(__dirname, structure.inputDir || "");
+const outputDir = path.resolve(__dirname, structure.outputDir || "www");
+const interval = structure.interval || 10000; // Milisaniye cinsinden izleme süresi
+const mainTemplatePath = path.join(inputDir, structure.mainTemplate || "templates/layouts/main.ejs"); // Main template path
+const pagesDir = path.join(inputDir, structure.pagesDir || "templates/pages"); // Pages directory
+
 function createStructure(basePath, structure) {
   for (const key in structure) {
     const fullPath = path.join(basePath, key);
-    // Dizin yoksa oluştur
     if (!fs.existsSync(fullPath)) {
       fs.mkdirSync(fullPath, { recursive: true });
       console.log(`Directory created: ${fullPath}`);
     }
-    // Eğer bir dizi ise dosyaları oluştur
     if (Array.isArray(structure[key])) {
       structure[key].forEach((file) => {
         const filePath = path.join(fullPath, file);
         if (!fs.existsSync(filePath)) {
           let content = "";
-          // main.ejs dosyasının içeriği
           if (file === "main.ejs") {
             content = `
 <!DOCTYPE html>
@@ -45,39 +47,28 @@ function createStructure(basePath, structure) {
     <script src="/js/app.js"></script>
 </body>
 </html>
-                        `;
+            `;
           } else if (file === "index.ejs") {
-            // index.ejs dosyasının içeriği
             content = `
 <h2>Home Page</h2>
 <p>Welcome to the Home Page!</p>
-                        `;
+            `;
           } else if (file === "about.ejs") {
-            // about.ejs dosyasının içeriği
             content = `
 <h2>About Page</h2>
 <p>Welcome to the About Page!</p>
-                        `;
+            `;
           }
           fs.writeFileSync(filePath, content);
           console.log(`File created: ${filePath}`);
         }
       });
     } else if (typeof structure[key] === "object") {
-      // Eğer nesne ise, recursive olarak içeriye git
       createStructure(fullPath, structure[key]);
     }
   }
 }
 
-// Proje kök dizininde yapıyı oluştur
-const inputDir = path.resolve(__dirname, structure.inputDir || "");
-createStructure(inputDir, {
-  templates: structure.templates,
-  public: structure.public,
-});
-
-// EJS dosyasını HTML'e çeviren bir fonksiyon
 function renderTemplate(templatePath, outputPath, data) {
   ejs.renderFile(templatePath, data, (err, str) => {
     if (err) {
@@ -94,32 +85,116 @@ function renderTemplate(templatePath, outputPath, data) {
   });
 }
 
-// outputDir dizininin var olup olmadığını kontrol et, yoksa oluştur
-const outputDir = path.resolve(__dirname, structure.outputDir || "www");
+function renderAllTemplates() {
+  const templates = fs
+    .readdirSync(pagesDir)
+    .filter((file) => file.endsWith(".ejs"));
+
+  templates.forEach((template) => {
+    const templatePath = path.join(pagesDir, template);
+    const outputPath = path.join(outputDir, template.replace(".ejs", ".html"));
+
+    const bodyContent = fs.readFileSync(templatePath, "utf-8");
+
+    const data = {
+      title: template.replace(".ejs", ""),
+      body: bodyContent,
+    };
+
+    renderTemplate(mainTemplatePath, outputPath, data);
+  });
+}
+
+function copyPublicDir(src, dest) {
+  if (!fs.existsSync(dest)) {
+    fs.mkdirSync(dest, { recursive: true });
+  }
+  const entries = fs.readdirSync(src, { withFileTypes: true });
+  for (const entry of entries) {
+    const srcPath = path.join(src, entry.name);
+    const destPath = path.join(dest, entry.name);
+    if (entry.isDirectory()) {
+      copyPublicDir(srcPath, destPath);
+    } else {
+      fs.copyFileSync(srcPath, destPath);
+      console.log(`File copied: ${destPath}`);
+    }
+  }
+}
+
+function copyPublicAssets() {
+  const publicSrcDir = path.join(inputDir, "public");
+  const publicDestDir = path.join(outputDir, "public");
+  copyPublicDir(publicSrcDir, publicDestDir);
+}
+
+function handleFileChange(filePath, action) {
+  const relativePath = path.relative(inputDir, filePath);
+  const destPath = path.join(outputDir, relativePath);
+
+  if (relativePath.startsWith(structure.pagesDir) || relativePath.startsWith("public")) {
+    console.log(`File change detected: ${action} ${filePath}`);
+    renderAllTemplates();
+    copyPublicAssets();
+  } else if (relativePath.startsWith("templates")) {
+    return; // templates klasöründeki diğer değişiklikleri yoksay
+  } else {
+    switch (action) {
+      case 'add':
+      case 'change':
+        fs.copyFileSync(filePath, destPath);
+        console.log(`File copied: ${destPath}`);
+        break;
+      case 'unlink':
+        if (fs.existsSync(destPath.replace(".ejs", ".html"))) {
+          fs.unlinkSync(destPath.replace(".ejs", ".html"));
+          console.log(`File deleted: ${destPath.replace(".ejs", ".html")}`);
+        }
+        break;
+      case 'addDir':
+        if (!fs.existsSync(destPath)) {
+          fs.mkdirSync(destPath);
+          console.log(`Directory created: ${destPath}`);
+        }
+        break;
+      case 'unlinkDir':
+        if (fs.existsSync(destPath)) {
+          fs.rmdirSync(destPath, { recursive: true });
+          console.log(`Directory deleted: ${destPath}`);
+        }
+        break;
+      default:
+        break;
+    }
+  }
+}
+
+function startWatcher() {
+  const watcher = chokidar.watch(inputDir, {
+    persistent: true,
+  });
+
+  watcher.on('add', (filePath) => handleFileChange(filePath, 'add'));
+  watcher.on('change', (filePath) => handleFileChange(filePath, 'change'));
+  watcher.on('unlink', (filePath) => handleFileChange(filePath, 'unlink'));
+  watcher.on('addDir', (dirPath) => handleFileChange(dirPath, 'addDir'));
+  watcher.on('unlinkDir', (dirPath) => handleFileChange(dirPath, 'unlinkDir'));
+}
+
 if (!fs.existsSync(outputDir)) {
   fs.mkdirSync(outputDir);
 }
 
-// templates/pages dizinindeki tüm ejs dosyalarını oku
-const templatesDir = path.join(inputDir, "templates/pages");
-const templates = fs
-  .readdirSync(templatesDir)
-  .filter((file) => file.endsWith(".ejs"));
-
-// Her template için render işlemini yap
-templates.forEach((template) => {
-  const templatePath = path.join(templatesDir, template);
-  const outputPath = path.join(outputDir, template.replace(".ejs", ".html"));
-
-  // EJS dosyasının içeriğini oku
-  const bodyContent = fs.readFileSync(templatePath, "utf-8");
-
-  // main.ejs layout'unu dahil et
-  const data = {
-    title: template.replace(".ejs", ""),
-    body: bodyContent,
-  };
-
-  const mainTemplatePath = path.join(inputDir, "templates/layouts/main.ejs");
-  renderTemplate(mainTemplatePath, outputPath, data);
+createStructure(inputDir, {
+  templates: structure.templates,
+  public: structure.public,
 });
+renderAllTemplates();
+copyPublicAssets();
+startWatcher();
+
+// structure.json dosyasındaki interval değerine göre izleme süresi
+setInterval(() => {
+  renderAllTemplates();
+  copyPublicAssets();
+}, interval);

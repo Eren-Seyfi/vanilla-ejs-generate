@@ -49,13 +49,13 @@ Wenn Vorlagen gerendert werden, wird die Layout-Datei verwendet, um den Seitenin
 
 ### structure.json
 
-``json
+```json
 {
   "inputDir": "src",
   "outputDir": "www",
   "interval": 5000,
   "mainTemplate": "templates/layouts/main.ejs",
-  "pagesDir": "templates/seiten",
+  "pagesDir": "templates/pages",
   "templates": {
     "layouts": ["main.ejs", "example.ejs"],
     "partials": ["header.ejs", "footer.ejs", "nav.ejs"],
@@ -65,7 +65,7 @@ Wenn Vorlagen gerendert werden, wird die Layout-Datei verwendet, um den Seitenin
       "index.example.ejs",
       "about.example.ejs"
     ],
-    "Komponenten": []
+    "components": []
   },
   "public": {
     "css": ["style.css"],

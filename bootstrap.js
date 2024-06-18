@@ -4,22 +4,30 @@ const path = require("path");
 const chokidar = require("chokidar");
 const fse = require("fs-extra");
 
+// structure.json dosyasını oku ve yapılandırma verilerini al
 const structure = JSON.parse(
   fs.readFileSync(path.resolve(__dirname, "structure.json"), "utf8")
 );
 
+// Giriş ve çıkış dizinlerini belirle
 const inputDir = path.resolve(__dirname, structure.inputDir || "");
 const outputDir = path.resolve(__dirname, structure.outputDir || "www");
 const interval = structure.interval || 10000; // Milisaniye cinsinden izleme süresi
 const mainTemplatePath = path.join(
   inputDir,
   structure.mainTemplate || "templates/layouts/main.ejs"
-); // Main template path
-const pagesDir = path.join(inputDir, structure.pagesDir || "templates/pages"); // Pages directory
+); // Ana şablon yolu
+const pagesDir = path.join(inputDir, structure.pagesDir || "templates/pages"); // Sayfa şablonları dizini
 
+/**
+ * Dizin yapısını oluşturan fonksiyon
+ * @param {string} basePath - Temel dizin yolu
+ * @param {object} structure - Oluşturulacak dizin ve dosya yapısı
+ */
 function createStructure(basePath, structure) {
   for (const key in structure) {
     const fullPath = path.join(basePath, key);
+    // Dizin mevcut değilse oluştur
     if (!fs.existsSync(fullPath)) {
       fs.mkdirSync(fullPath, { recursive: true });
       console.log(`Directory created: ${fullPath}`);
@@ -27,8 +35,10 @@ function createStructure(basePath, structure) {
     if (Array.isArray(structure[key])) {
       structure[key].forEach((file) => {
         const filePath = path.join(fullPath, file);
+        // Dosya mevcut değilse oluştur
         if (!fs.existsSync(filePath)) {
           let content = "";
+          // Ana şablon dosyası için varsayılan içerik
           if (file === "main.ejs") {
             content = `
 <!DOCTYPE html>
@@ -52,27 +62,37 @@ function createStructure(basePath, structure) {
 </body>
 </html>
             `;
+          // Ana sayfa için varsayılan içerik
           } else if (file === "index.ejs") {
             content = `
 <h2>Home Page</h2>
 <p>Welcome to the Home Page!</p>
             `;
+          // Hakkında sayfası için varsayılan içerik
           } else if (file === "about.ejs") {
             content = `
 <h2>About Page</h2>
 <p>Welcome to the About Page!</p>
             `;
           }
+          // Dosya içeriğini yaz
           fs.writeFileSync(filePath, content);
           console.log(`File created: ${filePath}`);
         }
       });
     } else if (typeof structure[key] === "object") {
+      // Alt dizinleri oluştur
       createStructure(fullPath, structure[key]);
     }
   }
 }
 
+/**
+ * EJS şablonunu HTML'e dönüştüren fonksiyon
+ * @param {string} templatePath - Şablon dosyasının yolu
+ * @param {string} outputPath - Oluşturulacak HTML dosyasının yolu
+ * @param {object} data - Şablon verileri
+ */
 function renderTemplate(templatePath, outputPath, data) {
   ejs.renderFile(templatePath, data, (err, str) => {
     if (err) {
@@ -89,6 +109,9 @@ function renderTemplate(templatePath, outputPath, data) {
   });
 }
 
+/**
+ * Tüm EJS şablonlarını HTML'e dönüştüren fonksiyon
+ */
 function renderAllTemplates() {
   const templates = fs
     .readdirSync(pagesDir)
@@ -109,6 +132,11 @@ function renderAllTemplates() {
   });
 }
 
+/**
+ * Genel varlıkları (public) kopyalayan fonksiyon
+ * @param {string} src - Kaynak dizin yolu
+ * @param {string} dest - Hedef dizin yolu
+ */
 function copyPublicDir(src, dest) {
   if (!fs.existsSync(dest)) {
     fs.mkdirSync(dest, { recursive: true });
@@ -126,12 +154,20 @@ function copyPublicDir(src, dest) {
   }
 }
 
+/**
+ * Genel varlıkları kopyalayan ana fonksiyon
+ */
 function copyPublicAssets() {
   const publicSrcDir = path.join(inputDir, "public");
   const publicDestDir = path.join(outputDir, "public");
   copyPublicDir(publicSrcDir, publicDestDir);
 }
 
+/**
+ * Dosya değişikliklerini yöneten fonksiyon
+ * @param {string} filePath - Değişen dosyanın yolu
+ * @param {string} action - Dosya üzerinde yapılan işlem (add, change, unlink)
+ */
 function handleFileChange(filePath, action) {
   const relativePath = path.relative(inputDir, filePath);
   const destPath = path.join(outputDir, relativePath);
@@ -179,6 +215,9 @@ function handleFileChange(filePath, action) {
   }
 }
 
+/**
+ * Dosya ve dizin değişikliklerini izleyen fonksiyon
+ */
 function startWatcher() {
   const watcher = chokidar.watch(inputDir, {
     persistent: true,
@@ -191,15 +230,20 @@ function startWatcher() {
   watcher.on("unlinkDir", (dirPath) => handleFileChange(dirPath, "unlinkDir"));
 }
 
+/**
+ * Çıktı dizinini temizleyen fonksiyon
+ */
 function clearOutputDir() {
   fse.emptyDirSync(outputDir);
   console.log(`Output directory ${outputDir} cleared.`);
 }
 
+// Çıktı dizini yoksa oluştur
 if (!fs.existsSync(outputDir)) {
   fs.mkdirSync(outputDir);
 }
 
+// Yapıyı oluştur, tüm şablonları dönüştür, genel varlıkları kopyala ve izleyiciyi başlat
 createStructure(inputDir, {
   templates: structure.templates,
   public: structure.public,
@@ -208,7 +252,7 @@ renderAllTemplates();
 copyPublicAssets();
 startWatcher();
 
-// structure.json dosyasındaki interval değerine göre izleme süresi
+// structure.json dosyasındaki interval değerine göre düzenli aralıklarla çıktı dizinini temizle ve yeniden oluştur
 setInterval(() => {
   clearOutputDir();
   renderAllTemplates();

@@ -21,13 +21,13 @@ Dieses Projekt bietet ein einfaches Setup-Beispiel, das EJS-Dateien mit dem File
 2. installieren Sie die Abhängigkeiten:
 
    ```bash
-   npm installieren
+   npm install
    ```
 
 3. starten Sie das Projekt:
 
    ```bash
-   npm starten
+   npm start
    ```
 
 ## Struktur

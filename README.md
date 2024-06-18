@@ -8,11 +8,11 @@
 
 # EJS Template Project / EJS Şablon Projesi
 
-[![Türkçe](https://upload.wikimedia.org/wikipedia/commons/b/b4/Flag_of_Turkey.svg)](md/TR.md)
+[![Türkçe](https://upload.wikimedia.org/wikipedia/commons/b/b4/Flag_of_Turkey.svg =100x60)](md/TR.md)
 
-[![English](https://upload.wikimedia.org/wikipedia/en/a/a4/Flag_of_the_United_States.svg)](md/EN.md) [![Deutsch](https://upload.wikimedia.org/wikipedia/en/b/ba/Flag_of_Germany.svg)](md/DE.md)
-[![Français](https://upload.wikimedia.org/wikipedia/en/c/c3/Flag_of_France.svg)](md/FR.md) [![中文](https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Flag_of_the_People%27s_Republic_of_China.svg/1200px-Flag_of_the_People%27s_Republic_of_China.svg.png)](md/CN.md)
-[![हिंदी](https://upload.wikimedia.org/wikipedia/commons/4/41/Flag_of_India.svg)](md/HI.md) [![Español](https://upload.wikimedia.org/wikipedia/commons/9/9a/Flag_of_Spain.svg)](md/ES.md)
+[![English](https://upload.wikimedia.org/wikipedia/en/a/a4/Flag_of_the_United_States.svg =100x60)](md/EN.md) [![Deutsch](https://upload.wikimedia.org/wikipedia/en/b/ba/Flag_of_Germany.svg =100x60)](md/DE.md)
+[![Français](https://upload.wikimedia.org/wikipedia/en/c/c3/Flag_of_France.svg =100x60)](md/FR.md) [![中文](https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Flag_of_the_People%27s_Republic_of_China.svg/1200px-Flag_of_the_People%27s_Republic_of_China.svg.png =100x60)](md/CN.md)
+[![हिंदी](https://upload.wikimedia.org/wikipedia/commons/4/41/Flag_of_India.svg =100x60)](md/HI.md) [![Español](https://upload.wikimedia.org/wikipedia/commons/9/9a/Flag_of_Spain.svg =100x60)](md/ES.md)
 
 ## Project Description / Proje Açıklaması
 
@@ -26,8 +26,8 @@ Please click on the respective flag to read the full instructions in your prefer
 
 Lütfen tercih ettiğiniz dilde tam talimatları okumak için ilgili bayrağa tıklayın:
 
-[![Türkçe](https://upload.wikimedia.org/wikipedia/commons/b/b4/Flag_of_Turkey.svg)](md/TR.md)
+[![Türkçe](https://upload.wikimedia.org/wikipedia/commons/b/b4/Flag_of_Turkey.svg =100x60)](md/TR.md)
 
-[![English](https://upload.wikimedia.org/wikipedia/en/a/a4/Flag_of_the_United_States.svg)](md/EN.md) [![Deutsch](https://upload.wikimedia.org/wikipedia/en/b/ba/Flag_of_Germany.svg)](md/DE.md)
-[![Français](https://upload.wikimedia.org/wikipedia/en/c/c3/Flag_of_France.svg)](md/FR.md) [![中文](https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Flag_of_the_People%27s_Republic_of_China.svg/1200px-Flag_of_the_People%27s_Republic_of_China.svg.png)](md/CN.md)
-[![हिंदी](https://upload.wikimedia.org/wikipedia/commons/4/41/Flag_of_India.svg)](md/HI.md) [![Español](https://upload.wikimedia.org/wikipedia/commons/9/9a/Flag_of_Spain.svg)](md/ES.md)
+[![English](https://upload.wikimedia.org/wikipedia/en/a/a4/Flag_of_the_United_States.svg =100x60)](md/EN.md) [![Deutsch](https://upload.wikimedia.org/wikipedia/en/b/ba/Flag_of_Germany.svg =100x60)](md/DE.md)
+[![Français](https://upload.wikimedia.org/wikipedia/en/c/c3/Flag_of_France.svg =100x60)](md/FR.md) [![中文](https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Flag_of_the_People%27s_Republic_of_China.svg/1200px-Flag_of_the_People%27s_Republic_of_China.svg.png =100x60)](md/CN.md)
+[![हिंदी](https://upload.wikimedia.org/wikipedia/commons/4/41/Flag_of_India.svg =100x60)](md/HI.md) [![Español](https://upload.wikimedia.org/wikipedia/commons/9/9a/Flag_of_Spain.svg =100x60)](md/ES.md)

@@ -62,13 +62,13 @@ function createStructure(basePath, structure) {
 </body>
 </html>
             `;
-          // Ana sayfa için varsayılan içerik
+            // Ana sayfa için varsayılan içerik
           } else if (file === "index.ejs") {
             content = `
 <h2>Home Page</h2>
 <p>Welcome to the Home Page!</p>
             `;
-          // Hakkında sayfası için varsayılan içerik
+            // Hakkında sayfası için varsayılan içerik
           } else if (file === "about.ejs") {
             content = `
 <h2>About Page</h2>

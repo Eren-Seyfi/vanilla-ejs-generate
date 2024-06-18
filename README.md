@@ -4,6 +4,12 @@ This project demonstrates a simple setup for using EJS templates with a file wat
 
 Bu proje, EJS şablonlarını kullanarak dosya izleyici ile EJS dosyalarını HTML'e dönüştüren ve genel varlıkları bir çıktı dizinine kopyalayan basit bir kurulum örneği sunar. Proje ayrıca düzenli aralıklarla çıktı dizinini temizleme ve yeniden oluşturma özelliği içerir.
 
+### Requirements / Gereksinimler
+
+- chokidar
+- ejs
+- fs-extra
+
 ## Usage Instructions / Kullanım Talimatları
 
 Please click on the respective flag to read the full instructions in your preferred language:

@@ -1,4 +1,3 @@
-
 # EJS Şablon Projesi
 
 Bu proje, EJS şablonlarını kullanarak dosya izleyici ile EJS dosyalarını HTML'e dönüştüren ve genel varlıkları bir çıktı dizinine kopyalayan basit bir kurulum örneği sunar. Proje ayrıca düzenli aralıklarla çıktı dizinini temizleme ve yeniden oluşturma özelliği içerir.
@@ -15,7 +14,7 @@ Bu proje, EJS şablonlarını kullanarak dosya izleyici ile EJS dosyalarını HT
 1. Depoyu klonlayın:
 
    ```bash
-   git clone https://github.com/yourusername/ejs-template-project.git
+   git clone https://github.com/Eren-Seyfi/vanilla-ejs-generate.git
    cd ejs-template-project
    ```
 
@@ -34,11 +33,17 @@ Bu proje, EJS şablonlarını kullanarak dosya izleyici ile EJS dosyalarını HT
 ## Yapı
 
 - **src**: EJS şablonları ve genel varlıkları içeren kaynak dizini.
-  - **templates**: `layouts`, `partials` ve `pages` içerir.
+  - **templates**: `layouts`, `partials`, `components` ve `pages` içerir.
   - **public**: CSS ve JS dosyaları gibi genel varlıkları içerir.
 - **www**: Dönüştürülmüş HTML ve kopyalanmış varlıkların saklandığı çıktı dizini.
 - **bootstrap.js**: Projeyi kurmak, değişiklikleri izlemek ve şablonları dönüştürmek için ana betik.
 - **structure.json**: Yapıyı ve ayarları tanımlayan yapılandırma dosyası.
+
+## Layouts Nasıl Çalışır:
+
+Bu projede, EJS şablonları modüler bir yapı sağlamak için layout'lara (düzenlere) ayrılmıştır. Layout dosyaları templates/layouts dizininde yer alır. Her sayfa EJS dosyası, dosya adında layout adını belirterek hangi layout dosyasına ait olduğunu belirtir, örneğin, index.main.ejs, main.ejs layout'unun kullanılacağını gösterir.
+
+Şablonlar render edildiğinde, layout dosyası sayfa içeriğini sarmak için kullanılır. Bu, farklı sayfalar arasında tutarlı başlık, altbilgi ve navigasyon bölümleri sağlar. Örneğin, bir index.main.ejs dosyası, main.ejs layout'u ile sarılacak ve bu layout'u kullanan tüm sayfalar için aynı başlık ve altbilgi kullanılacaktır.
 
 ## Yapılandırma
 
@@ -48,13 +53,19 @@ Bu proje, EJS şablonlarını kullanarak dosya izleyici ile EJS dosyalarını HT
 {
   "inputDir": "src",
   "outputDir": "www",
-  "interval": 10000,
+  "interval": 5000,
   "mainTemplate": "templates/layouts/main.ejs",
   "pagesDir": "templates/pages",
   "templates": {
-    "layouts": ["main.ejs"],
+    "layouts": ["main.ejs", "example.ejs"],
     "partials": ["header.ejs", "footer.ejs", "nav.ejs"],
-    "pages": ["index.ejs", "about.ejs"]
+    "pages": [
+      "index.main.ejs",
+      "about.main.ejs",
+      "index.example.ejs",
+      "about.example.ejs"
+    ],
+    "components": []
   },
   "public": {
     "css": ["style.css"],

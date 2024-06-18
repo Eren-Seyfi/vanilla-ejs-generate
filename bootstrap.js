@@ -63,13 +63,13 @@ function createStructure(basePath, structure) {
 </html>
             `;
             // Ana sayfa için varsayılan içerik
-          } else if (file === "index.ejs") {
+          } else if (file === "index.main.ejs") {
             content = `
 <h2>Home Page</h2>
 <p>Welcome to the Home Page!</p>
             `;
             // Hakkında sayfası için varsayılan içerik
-          } else if (file === "about.ejs") {
+          } else if (file === "about.main.ejs") {
             content = `
 <h2>About Page</h2>
 <p>Welcome to the About Page!</p>
@@ -119,7 +119,27 @@ function renderAllTemplates() {
 
   templates.forEach((template) => {
     const templatePath = path.join(pagesDir, template);
-    const outputPath = path.join(outputDir, template.replace(".ejs", ".html"));
+    let outputPath;
+
+    // layout dosyasına göre çıkış yolu belirle
+    if (template.includes(".main.ejs")) {
+      outputPath = path.join(outputDir, template.replace(".main.ejs", ".html"));
+    } else if (template.includes(".example.ejs")) {
+      const exampleDir = path.join(outputDir, "example");
+      if (!fs.existsSync(exampleDir)) {
+        fs.mkdirSync(exampleDir);
+      }
+      outputPath = path.join(
+        exampleDir,
+        template.replace(".example.ejs", ".html")
+      );
+    }
+
+    // Eğer outputPath tanımlanmadıysa, hatayı atlayarak devam eder
+    if (!outputPath) {
+      console.error(`Output path is not defined for template: ${template}`);
+      return;
+    }
 
     const bodyContent = fs.readFileSync(templatePath, "utf-8");
 

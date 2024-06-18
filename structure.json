@@ -1,16 +1,33 @@
 {
   "inputDir": "src",
   "outputDir": "www",
-  "interval": 5000, 
-  "mainTemplate": "templates/layouts/main.ejs", 
-  "pagesDir": "templates/pages", 
+  "interval": 5000,
+  "mainTemplate": "templates/layouts/main.ejs",
+  "pagesDir": "templates/pages",
   "templates": {
-    "layouts": ["main.ejs"],
-    "partials": ["header.ejs", "footer.ejs", "nav.ejs"],
-    "pages": ["index.ejs", "about.ejs"]
+    "layouts": [
+      "main.ejs",
+      "example.ejs"
+    ],
+    "partials": [
+      "header.ejs",
+      "footer.ejs",
+      "nav.ejs"
+    ],
+    "pages": [
+      "index.main.ejs",
+      "about.main.ejs",
+      "index.example.ejs",
+      "about.example.ejs"
+    ],
+    "components": []
   },
   "public": {
-    "css": ["style.css"],
-    "js": ["app.js"]
+    "css": [
+      "style.css"
+    ],
+    "js": [
+      "app.js"
+    ]
   }
 }

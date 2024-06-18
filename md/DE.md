@@ -1,60 +1,71 @@
+# EJS-Vorlagen-Projekt
 
-# EJS-Vorlagenprojekt
+Dieses Projekt bietet ein einfaches Setup-Beispiel, das EJS-Dateien mit dem File Tracker unter Verwendung von EJS-Vorlagen in HTML konvertiert und öffentliche Assets in ein Ausgabeverzeichnis kopiert. Das Projekt bietet auch die Möglichkeit, das Ausgabeverzeichnis regelmäßig zu bereinigen und neu zu erstellen.
 
-Dieses Projekt zeigt eine einfache Einrichtung zur Verwendung von EJS-Vorlagen mit einem Dateiwächter, der EJS-Dateien in HTML rendert und öffentliche Assets in ein Ausgabeverzeichnis kopiert. Das Projekt umfasst auch eine Funktion zum Löschen und Neugenerieren des Ausgabeverzeichnisses in regelmäßigen Abständen.
+## Merkmale
 
-## Funktionen
-
-- Rendert EJS-Vorlagen in HTML.
-- Kopiert öffentliche Assets (CSS, JS, Bilder usw.) in das Ausgabeverzeichnis.
+- Konvertiert EJS-Vorlagen in HTML.
+- Kopiert generische Assets (CSS, JS, Bilder, etc.) in das Ausgabeverzeichnis.
 - Überwacht Änderungen im Quellverzeichnis und aktualisiert das Ausgabeverzeichnis entsprechend.
-- Löscht und regeneriert das Ausgabeverzeichnis in regelmäßigen Abständen.
+- Säubert das Ausgabeverzeichnis regelmäßig und baut es neu auf.
 
 ## Installation
 
-1. Klonen Sie das Repository:
+1) Klonen Sie das Repository:
 
    ```bash
-   git clone https://github.com/yourusername/ejs-template-project.git
+   git clone https://github.com/Eren-Seyfi/vanilla-ejs-generate.git
    cd ejs-template-project
    ```
 
-2. Installieren Sie die Abhängigkeiten:
+2. installieren Sie die Abhängigkeiten:
 
    ```bash
-   npm install
+   npm installieren
    ```
 
-3. Führen Sie das Projekt aus:
+3. starten Sie das Projekt:
 
    ```bash
-   npm start
+   npm starten
    ```
 
 ## Struktur
 
-- **src**: Quellverzeichnis mit EJS-Vorlagen und öffentlichen Assets.
-  - **templates**: Enthält `layouts`, `partials` und `pages`.
+- **src**: Ressourcenverzeichnis mit EJS-Vorlagen und öffentlichen Assets.
+  - **templates**: Enthält `layouts`, `partials`, `components` und `pages`.
   - **public**: Enthält öffentliche Assets wie CSS- und JS-Dateien.
-- **www**: Ausgabeverzeichnis, in dem die gerenderten HTML- und kopierten Assets gespeichert werden.
-- **bootstrap.js**: Hauptskript zur Einrichtung des Projekts, Überwachung von Änderungen und Rendern von Vorlagen.
-- **structure.json**: Konfigurationsdatei, die die Struktur und Einstellungen definiert.
+- **www**: Ausgabeverzeichnis, in dem konvertiertes HTML und kopierte Assets gespeichert werden.
+- **bootstrap.js**: Hauptskript zum Einrichten des Projekts, Verfolgen von Änderungen und Konvertieren von Vorlagen.
+- **structure.json**: Konfigurationsdatei, die die Struktur und die Einstellungen definiert.
+
+## Wie Layouts funktionieren:
+
+In diesem Projekt sind die EJS-Vorlagen in Layouts unterteilt, um eine modulare Struktur zu schaffen. Die Layout-Dateien befinden sich im Verzeichnis templates/layouts. Jede EJS-Datei einer Seite gibt an, zu welcher Layout-Datei sie gehört, indem sie den Layout-Namen im Dateinamen angibt, z. B. index.main.ejs bedeutet, dass das Layout main.ejs verwendet wird.
+
+Wenn Vorlagen gerendert werden, wird die Layout-Datei verwendet, um den Seiteninhalt zu umhüllen. Dadurch wird sichergestellt, dass die Kopf- und Fußzeilen sowie die Navigationsabschnitte auf den verschiedenen Seiten konsistent sind. Zum Beispiel wird eine index.main.ejs-Datei mit dem main.ejs-Layout umhüllt, und die gleiche Kopf- und Fußzeile wird für alle Seiten verwendet, die dieses Layout verwenden.
 
 ## Konfiguration
 
 ### structure.json
 
-```json
+``json
 {
   "inputDir": "src",
   "outputDir": "www",
-  "interval": 10000,
+  "interval": 5000,
   "mainTemplate": "templates/layouts/main.ejs",
-  "pagesDir": "templates/pages",
+  "pagesDir": "templates/seiten",
   "templates": {
-    "layouts": ["main.ejs"],
+    "layouts": ["main.ejs", "example.ejs"],
     "partials": ["header.ejs", "footer.ejs", "nav.ejs"],
-    "pages": ["index.ejs", "about.ejs"]
+    "pages": [
+      "index.main.ejs",
+      "about.main.ejs",
+      "index.example.ejs",
+      "about.example.ejs"
+    ],
+    "Komponenten": []
   },
   "public": {
     "css": ["style.css"],
@@ -63,14 +74,16 @@ Dieses Projekt zeigt eine einfache Einrichtung zur Verwendung von EJS-Vorlagen m
 }
 ```
 
-- **inputDir**: Das Quellverzeichnis.
-- **outputDir**: Das Ausgabeverzeichnis.
-- **interval**: Intervall in Millisekunden zum Löschen und Neugenerieren des Ausgabeverzeichnisses.
-- **mainTemplate**: Pfad zur Haupt-EJS-Vorlage.
-- **pagesDir**: Verzeichnis, das die EJS-Seitenvorlagen enthält.
-- **templates**: Struktur der Vorlagen.
-- **public**: Struktur der öffentlichen Assets.
+- **inputDir**: Quellverzeichnis.
+- **AusgabeVerzeichnis**: Ausgabeverzeichnis.
+- **Intervall**: Intervall in Millisekunden, um das Ausgabeverzeichnis zu löschen und neu zu erstellen.
+- **mainTemplate**: Pfad zur EJS-Hauptvorlage.
+- **pagesDir**: Das Verzeichnis, das die EJS-Seitenvorlagen enthält.
+- **templates**: Die Struktur der Vorlagen.
+- **public**: Die Struktur der öffentlichen Entitäten.
 
 ## Skripte
 
-- **start**: Führt das Hauptskript (`bootstrap.js`) aus.
+- **start**: Führt das Hauptskript aus (`bootstrap.js`).
+
+Übersetzt mit DeepL.com (kostenlose Version)
